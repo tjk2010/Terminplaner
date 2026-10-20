@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Schlauer Kalender</title>
+  <meta name="description" content="Dein Kalender, der mitdenkt: Termine, Wetter, Feiertage und passende Kochideen für heute.">
+
+  <!-- Damit die Seite auf dem iPhone wie eine echte App aussieht -->
+  <meta name="theme-color" content="#E4E8EE">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Kalender">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <main id="inhalt" tabindex="-1"></main>
+
+    <nav class="tabs" id="tabs" aria-label="Hauptmenü"></nav>
+  </div>
+
+  <!-- Eine Unterseite, die von unten hereinfährt (Termin bearbeiten, Rezept, ...) -->
+  <dialog id="blatt"></dialog>
+
+  <!-- Kurze Rückmeldungen wie "Termin gelöscht" -->
+  <div id="hinweis" role="status" aria-live="polite"></div>
+
+  <noscript>Diese App braucht JavaScript. Bitte aktiviere es in deinem Browser.</noscript>
+
+  <script src="rezepte.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+/* ---------------------------------------------------------
+   AUSSEHEN
+   Idee: Alles ist ruhig und neutral. Nur der Kopfbereich von
+   "Heute" färbt sich nach dem Wetter. Das ist der einzige kräftige
+   Moment der App.
+   --------------------------------------------------------- */
+
+:root {
+  /* Basisfarben */
+  --tinte: #1b2333;        /* Text und Hauptknöpfe */
+  --gedaempft: #566073;    /* Nebentext */
+  --papier: #f3f5f8;       /* Hintergrund */
+  --flaeche: #ffffff;      /* Eingabefelder, Tab-Leiste, Unterseiten */
+  --linie: #dde2ea;
+  --fokus: #2f6bff;
+  --warnung: #b3261e;
+
+  /* Schrift: auf dem iPhone die runde Systemschrift */
+  --schrift: ui-rounded, "SF Pro Rounded", "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --tabhoehe: 64px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tinte: #eef1f6;
+    --gedaempft: #a4aebf;
+    --papier: #10151f;
+    --flaeche: #1a2130;
+    --linie: #2a3345;
+    --fokus: #7ea6ff;
+    --warnung: #ff8a80;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--papier);
+  color: var(--tinte);
+  font-family: var(--schrift);
+  font-size: 1.0625rem;
+  line-height: 1.45;
+}
+
+.app {
+  position: relative;
+  max-width: 640px;
+  min-height: 100dvh;
+  margin: 0 auto;
+  background: var(--papier);
+}
+
+#inhalt { outline: none; padding-bottom: calc(var(--tabhoehe) + env(safe-area-inset-bottom) + 24px); }
+
+h1, h2, h3, p { margin: 0; }
+
+button, input, select { font: inherit; color: inherit; }
+
+:focus-visible { outline: 3px solid var(--fokus); outline-offset: 2px; }
+
+.nur-lesen {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* ---------- Knöpfe ---------- */
+
+.knopf {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  min-height: 46px; padding: .6rem 1.2rem;
+  border: 2px solid transparent; border-radius: 999px;
+  font-weight: 700; cursor: pointer; text-align: center;
+}
+.knopf svg { width: 20px; height: 20px; flex: none; }
+.knopf--voll { background: var(--tinte); color: var(--papier); }
+.knopf--rand { background: transparent; border-color: var(--linie); }
+.knopf--text { background: none; padding: .4rem .6rem; min-height: 40px; text-decoration: underline; text-underline-offset: 3px; }
+.knopf--gefahr { color: var(--warnung); border-color: currentColor; background: transparent; }
+.knopf[disabled] { opacity: .45; cursor: default; }
+
+/* ---------- Kopfbereich "Heute" ---------- */
+
+.hero {
+  --himmel: #e4e8ee;
+  --himmel-text: #1b2333;
+  position: relative; overflow: hidden;
+  padding: calc(env(safe-area-inset-top) + 28px) 20px 34px;
+  border-radius: 0 0 36px 36px;
+  background: var(--himmel);
+  color: var(--himmel-text);
+  transition: background-color .8s ease, color .8s ease;
+}
+@media (prefers-color-scheme: dark) {
+  .hero { --himmel: #232c3d; --himmel-text: #eef1f6; }
+}
+.hero[data-himmel="sonne"]    { --himmel: #ffd24a; --himmel-text: #2a2100; }
+.hero[data-himmel="nacht"]    { --himmel: #26305c; --himmel-text: #ffffff; }
+.hero[data-himmel="wolken"]   { --himmel: #c3ccd8; --himmel-text: #1b2333; }
+.hero[data-himmel="nebel"]    { --himmel: #cdd0d4; --himmel-text: #1b2333; }
+.hero[data-himmel="regen"]    { --himmel: #4e73a0; --himmel-text: #ffffff; }
+.hero[data-himmel="schnee"]   { --himmel: #e3edf6; --himmel-text: #1b2333; }
+.hero[data-himmel="gewitter"] { --himmel: #3e3f73; --himmel-text: #ffffff; }
+
+/* Das große Wetterbild ist immer vom Textton weg gefärbt (hell auf hellen,
+   dunkel auf dunklen Flächen). So wird der Text darüber nie schlechter lesbar. */
+.hero { --bild: #ffffff; --bild-deckkraft: .55; }
+@media (prefers-color-scheme: dark) {
+  .hero { --bild: #ffffff; --bild-deckkraft: .08; }
+}
+.hero[data-himmel="sonne"]    { --bild: #ffffff; --bild-deckkraft: .45; }
+.hero[data-himmel="wolken"]   { --bild: #ffffff; --bild-deckkraft: .5; }
+.hero[data-himmel="nebel"]    { --bild: #ffffff; --bild-deckkraft: .5; }
+.hero[data-himmel="schnee"]   { --bild: #4e73a0; --bild-deckkraft: .16; }
+.hero[data-himmel="regen"]    { --bild: #0b1626; --bild-deckkraft: .18; }
+.hero[data-himmel="gewitter"] { --bild: #ffffff; --bild-deckkraft: .12; }
+.hero[data-himmel="nacht"]    { --bild: #ffffff; --bild-deckkraft: .16; }
+
+.hero-bild {
+  position: absolute; top: calc(env(safe-area-inset-top) + 6px); right: -34px;
+  width: 210px; height: auto; pointer-events: none;
+  color: var(--bild); opacity: var(--bild-deckkraft);
+}
+
+.hero-text { position: relative; }
+
+.hero-datum { font-weight: 700; }
+.hero-wetter { opacity: .88; font-size: .98rem; }
+.hero-anlass { font-weight: 700; margin-top: .25rem; }
+
+.hero-satz {
+  margin: 1.1rem 0 .7rem;
+  font-size: clamp(2.1rem, 8.6vw, 3.3rem);
+  font-weight: 800; line-height: 1.05; letter-spacing: -.025em;
+  text-wrap: balance;
+}
+/* Die Überschrift blendet nur beim ersten Auftritt und bei "Anderer Vorschlag" ein */
+.hero-satz--neu { animation: einblenden .7s ease-out both; }
+.hero-beschreibung { max-width: 30rem; }
+.hero-zeit { opacity: .85; font-size: .98rem; margin-top: .15rem; }
+
+.hero-knoepfe { display: grid; gap: .6rem; max-width: 20rem; margin-top: 1.4rem; }
+.hero .knopf--voll { background: var(--himmel-text); color: var(--himmel); }
+.hero .knopf--rand { border-color: currentColor; }
+.hero :focus-visible { outline-color: currentColor; }
+
+.hero-formular { display: grid; gap: .75rem; margin-top: 1.2rem; max-width: 26rem; }
+.hero-formular .knopf--rand { color: inherit; }
+
+@keyframes einblenden {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------- Inhalte ---------- */
+
+.bereich { padding: 28px 20px 0; }
+.bereich-kopf { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: .4rem; }
+h2 { font-size: 1.3rem; font-weight: 800; letter-spacing: -.01em; }
+.titelzeile .knopf { white-space: nowrap; }
+.titelzeile { padding: calc(env(safe-area-inset-top) + 24px) 20px 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem 1rem; }
+h1 { font-size: 2rem; font-weight: 800; letter-spacing: -.02em; }
+
+.leer { color: var(--gedaempft); padding: .6rem 0 .2rem; max-width: 30rem; }
+
+.liste { list-style: none; margin: 0; padding: 0; }
+
+.zeile {
+  display: grid; grid-template-columns: 5.4rem 1fr; gap: .75rem; align-items: baseline;
+  width: 100%; padding: .85rem 0; border: 0; border-bottom: 1px solid var(--linie);
+  background: none; text-align: left; cursor: pointer;
+}
+.zeile-zeit { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--gedaempft); }
+.zeile-titel { font-weight: 650; overflow-wrap: anywhere; }
+.zeile--feiertag .zeile-titel { font-weight: 600; color: var(--gedaempft); }
+.zeile--vorbei { opacity: .55; }
+.zeile--statisch { cursor: default; }
+
+.idee {
+  display: block; width: 100%; padding: .95rem 0; border: 0; border-bottom: 1px solid var(--linie);
+  background: none; text-align: left; cursor: pointer;
+}
+.idee-name { display: block; font-weight: 700; }
+.idee-text { display: block; color: var(--gedaempft); font-size: .98rem; }
+.idee-zeit { display: block; color: var(--gedaempft); font-size: .88rem; margin-top: .15rem; }
+
+.tag-titel { font-size: 1.05rem; font-weight: 800; margin: 1.6rem 0 .1rem; }
+.tag-titel:first-child { margin-top: .8rem; }
+
+.hinweis-box {
+  margin: 28px 20px 0; padding: 1rem 1.1rem; border-radius: 20px;
+  background: var(--flaeche); border: 1px solid var(--linie);
+}
+.hinweis-box p { margin-bottom: .7rem; }
+
+/* ---------- Einkaufsliste ---------- */
+
+.einkauf-eingabe { display: flex; gap: .6rem; margin-top: 1rem; }
+.einkauf-eingabe input { flex: 1; min-width: 0; }
+.einkauf-punkt {
+  display: grid; grid-template-columns: 2rem 1fr; gap: .5rem; align-items: center;
+  width: 100%; padding: .75rem 0; border: 0; border-bottom: 1px solid var(--linie);
+  background: none; text-align: left; cursor: pointer;
+}
+.einkauf-kreis {
+  width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--gedaempft);
+  display: grid; place-items: center;
+}
+.einkauf-punkt[aria-pressed="true"] .einkauf-kreis { background: var(--tinte); border-color: var(--tinte); color: var(--papier); }
+.einkauf-punkt[aria-pressed="true"] .einkauf-name { text-decoration: line-through; color: var(--gedaempft); }
+.einkauf-aktionen { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.2rem; }
+
+/* ---------- Formulare ---------- */
+
+.feld { display: grid; gap: .35rem; margin-bottom: 1.05rem; }
+.feld label, .feld-titel { font-weight: 700; }
+.feld small { color: var(--gedaempft); }
+
+input[type="text"], input[type="date"], input[type="time"], select {
+  width: 100%; min-height: 50px; padding: .65rem .9rem;
+  border: 2px solid var(--linie); border-radius: 14px;
+  background: var(--flaeche); color: var(--tinte);
+}
+input::placeholder { color: var(--gedaempft); opacity: .8; }
+
+.feld-reihe { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+
+.gruppe { padding: 28px 20px 0; }
+.gruppe > h2 { margin-bottom: .9rem; }
+.gruppe p { color: var(--gedaempft); font-size: .96rem; }
+.gruppe p + .knopf, .gruppe .feld + .knopf { margin-top: .2rem; }
+.gruppe a { color: inherit; text-underline-offset: 3px; }
+.knopf-reihe { display: flex; flex-wrap: wrap; gap: .6rem; margin: .4rem 0 .8rem; }
+
+/* ---------- Tab-Leiste ---------- */
+
+.tabs {
+  position: fixed; left: 50%; bottom: 0; transform: translateX(-50%);
+  z-index: 5; width: min(100%, 640px);
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  padding-bottom: env(safe-area-inset-bottom);
+  background: color-mix(in srgb, var(--flaeche) 92%, transparent);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  border-top: 1px solid var(--linie);
+}
+.tab {
+  display: grid; justify-items: center; gap: 2px; padding: 8px 4px 7px;
+  border: 0; background: none; color: var(--gedaempft); cursor: pointer;
+  font-size: .74rem; font-weight: 650; min-height: var(--tabhoehe);
+}
+.tab-symbol { display: grid; place-items: center; width: 54px; height: 30px; border-radius: 999px; }
+.tab svg { width: 24px; height: 24px; }
+.tab[aria-current="page"] { color: var(--tinte); }
+.tab[aria-current="page"] .tab-symbol { background: var(--tinte); color: var(--papier); }
+
+/* ---------- Unterseite (Dialog) ---------- */
+
+dialog {
+  width: min(100%, 640px); max-width: 100%; max-height: min(92dvh, 760px); overflow: auto;
+  margin: auto auto 0; padding: 0; border: 0;
+  border-radius: 28px 28px 0 0;
+  background: var(--flaeche); color: var(--tinte);
+}
+dialog::backdrop { background: rgba(10, 15, 25, .5); }
+dialog[open] { animation: hoch .24s ease-out; }
+@keyframes hoch { from { transform: translateY(28px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+.blatt { padding: 26px 20px calc(24px + env(safe-area-inset-bottom)); }
+.blatt h2 { font-size: 1.5rem; margin-bottom: .35rem; letter-spacing: -.015em; }
+.blatt-meta { color: var(--gedaempft); margin-bottom: 1rem; }
+.blatt-liste { margin: .4rem 0 1.2rem; padding-left: 1.2rem; }
+.blatt-liste li { padding: .15rem 0; }
+.blatt-knoepfe { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.2rem; }
+.blatt-notiz { color: var(--gedaempft); font-size: .9rem; margin-top: 1rem; }
+
+/* ---------- Hinweis (Toast) ---------- */
+
+#hinweis {
+  position: fixed; left: 50%; bottom: calc(var(--tabhoehe) + env(safe-area-inset-bottom) + 14px);
+  transform: translateX(-50%); z-index: 20;
+  width: min(calc(100% - 32px), 460px); pointer-events: none;
+}
+.hinweis {
+  display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+  padding: .75rem 1rem; border-radius: 16px; pointer-events: auto;
+  background: var(--tinte); color: var(--papier);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, .25);
+  animation: hoch .2s ease-out;
+}
+.hinweis button { background: none; border: 0; color: inherit; font-weight: 800; text-decoration: underline; cursor: pointer; padding: .3rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+@media (min-width: 700px) {
+  body { background: color-mix(in srgb, var(--papier) 88%, #000); }
+  .app { box-shadow: 0 0 0 1px var(--linie); }
+}
